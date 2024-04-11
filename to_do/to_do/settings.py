@@ -74,6 +74,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "to_do.wsgi.application"
 
+AUTHENTICATION_BACKENDS = [
+    'users.login_verification.EmailVerifiedBackend',
+    # Include the default ModelBackend if you want Django to be able to authenticate without the custom backend under certain conditions.
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

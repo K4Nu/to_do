@@ -16,15 +16,19 @@ def create_profile(sender, instance, created, **kwargs):
             [instance.email],
         )
 
-@receiver(pre_save,sender=Profile)
-def delete_old_image(sender,instance,**kwargs):
+@receiver(pre_save, sender=Profile)
+def delete_old_image(sender, instance, **kwargs):
     if instance._state.adding and not instance.pk:
-        return
-    try:
-        old_instance=Profile.objects.get(pk=instance.pk)
-    except Profile.DoesNotExists:
+        # If the instance is new, there's no old image to delete.
         return
 
-    if old_instance.image:
-        if default_storage.exists(old_instance.image.name):
+    try:
+        old_instance = Profile.objects.get(pk=instance.pk)
+    except Profile.DoesNotExist:
+        # If there's no old instance, there's nothing to do.
+        return
+
+    # Check if the instance has an image, and it's different from the old one.
+    if instance.image and old_instance.image != instance.image:
+        if old_instance.image and default_storage.exists(old_instance.image.name):
             old_instance.image.delete(save=False)

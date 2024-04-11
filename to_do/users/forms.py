@@ -47,3 +47,6 @@ class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model=Profile
         fields=["image"]
+
+class ResendVerificationEmailForm(forms.Form):
+    email=forms.EmailField(label="Your email address")
