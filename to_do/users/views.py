@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .forms import CustomUserCreationForm,UpdateUserForm,UpdateProfileForm,ResendVerificationEmailForm
+from .forms import CustomUserCreationForm,UpdateUserForm,UpdateProfileForm,ResendVerificationEmailForm,CustomAuthenticationForm
 from .models import Profile
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -7,8 +7,9 @@ from django.core.signing import Signer,BadSignature
 from django.contrib.auth.models import User
 from .utils import send_verification_email
 from django.contrib import messages
-
-
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth import authenticate, login
+import os
 
 def index(request):
     return render(request,"users/index.html")
@@ -20,6 +21,10 @@ def register(request):
             user=form.save()
             profile=Profile(user=user)
             profile_image=request.FILES.get("profile_picture")
+            max_size=1*1024*1024
+            if profile_image.size>max_size:
+                messages.error(request,"File is too big")
+                return
             if not profile_image:
                 profile_image="default.jpg"
             profile.image=profile_image
@@ -51,6 +56,8 @@ def profile_update(request):
             user_form.save()
             saved_profile=profile_form.save(commit=False)
             existing_image = request.user.profile.image
+            if saved_profile.image:
+                print(os.stat(saved_profile.image))
             if not saved_profile.image:
                 saved_profile.image=existing_image
             saved_profile.save()
@@ -94,3 +101,22 @@ def resend_verification_email(request):
 
     # This return will handle both GET requests and POST requests where the form is not valid or an exception occurs
     return render(request, 'users/resend_verification_email.html', {'form': form})
+
+def custom_login_view(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.profile.email_verified:
+                    login(request, user)
+                    return redirect('index')  # Redirect to a success page.
+                else:
+                    messages.error(request, "Your email address is not verified.")
+            else:
+                messages.error(request, "Invalid username or password.")
+    else:
+        form = CustomAuthenticationForm()
+    return render(request, 'users/login.html', {'form': form})

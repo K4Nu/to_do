@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import Profile
 from django.core.files.storage import default_storage
+import os
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
@@ -12,16 +13,14 @@ def create_profile(sender, instance, created, **kwargs):
         send_mail(
             'Welcome to To-Do App',
             f'Welcome {instance.username} to our app, we hope you will enjoy it',
-            'k4nu420@gmail.com',
+            os.environ.get("EMAIL_HOST_USER"),
             [instance.email],
         )
 
 @receiver(pre_save, sender=Profile)
 def delete_old_image(sender, instance, **kwargs):
     if instance._state.adding and not instance.pk:
-        # If the instance is new, there's no old image to delete.
         return
-
     try:
         old_instance = Profile.objects.get(pk=instance.pk)
     except Profile.DoesNotExist:

@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
+from django.contrib.auth.forms import AuthenticationForm
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -50,3 +51,7 @@ class UpdateProfileForm(forms.ModelForm):
 
 class ResendVerificationEmailForm(forms.Form):
     email=forms.EmailField(label="Your email address")
+
+class CustomAuthenticationForm(AuthenticationForm):
+    pass
+

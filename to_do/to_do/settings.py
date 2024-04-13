@@ -10,8 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+
+
 from pathlib import Path
+from dotenv import load_dotenv
 import os
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-se10sqpmd3$owf%m6hs(_(h)$5#pye)rsmy4lz4xy-45$$_$3u"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -76,8 +81,6 @@ WSGI_APPLICATION = "to_do.wsgi.application"
 
 AUTHENTICATION_BACKENDS = [
     'users.login_verification.EmailVerifiedBackend',
-    # Include the default ModelBackend if you want Django to be able to authenticate without the custom backend under certain conditions.
-    'django.contrib.auth.backends.ModelBackend',
 ]
 
 # Database
@@ -144,6 +147,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'k4nu420@gmail.com'  # Use your Gmail address
-EMAIL_HOST_PASSWORD = 'qegqzepsebbhnzve'  # Use your Gmail password
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
+MAX_UPLOAD_SIZE = 25000000
