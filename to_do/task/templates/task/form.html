@@ -1,0 +1,20 @@
+{% extends 'users/base.html'%}
+{% load crispy_forms_tags %}
+{%block title%}Task Form{%endblock%}
+{%block content%}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <form method="post" action="">
+        {% csrf_token %}
+        {{ form.title|as_crispy_field }}
+        {{ form.content|as_crispy_field }}
+        {{ form.date_start|as_crispy_field }}
+        {{ form.date_end|as_crispy_field }}
+        {{ form.color|as_crispy_field }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+{%endblock%}

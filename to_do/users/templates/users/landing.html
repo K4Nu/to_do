@@ -1,0 +1,18 @@
+{% extends 'users/base.html' %}
+{%load static%}
+{% block title %}
+Task Maker - Organize Your Tasks
+{% endblock %}
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/landing.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="mb-3">Welcome to Task Maker</h1>
+    <p class="mb-5">Your tasks organized in one place.</p>
+    <div>
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg mx-1">Register</a>
+        <a href="{% url 'login' %}" class="btn btn-secondary btn-lg mx-1">Login</a>
+    </div>
+</div>
+{% endblock %}

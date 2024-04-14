@@ -1,12 +1,15 @@
+import os.path
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
 from django.contrib.auth.forms import AuthenticationForm
+from django.conf import settings
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
-
+    image=forms.FileField(required=False)
     class Meta:
         model = User
         fields = ("username", "email", "password1", "password2")
@@ -34,6 +37,17 @@ class CustomUserCreationForm(UserCreationForm):
 
         return cleaned_data
 
+    def clean_image(self):
+        image=self.cleaned_data.get("image")
+        if image:
+            extension=os.path.splitext(image.name)[1].lower()
+            valid_extensions = ['.png', '.jpg', '.jpeg']
+            if image.size>settings.MAX_UPLOAD_SIZE:
+                raise forms.ValidationError(f"File size is too big, maximum allowed size is {round(settings.MAX_UPLOAD_SIZE / (1024 * 1024))} MB")
+            if extension not in valid_extensions:
+                raise forms.ValidationError("Unsupported file extension. Allowed extensions are: PNG, JPG, JPEG.")
+        return image
+
 class UpdateUserForm(forms.ModelForm):
     username=forms.CharField(max_length=100,required=True)
     email=forms.EmailField(required=True)
@@ -43,11 +57,21 @@ class UpdateUserForm(forms.ModelForm):
         fields=["username","email"]
 
 class UpdateProfileForm(forms.ModelForm):
-    image=forms.ImageField()
-
     class Meta:
         model=Profile
         fields=["image"]
+        widgets={"image":forms.FileInput()}
+
+    def clean_image(self):
+        image=self.cleaned_data.get("image")
+        if image:
+            extension=os.path.splitext(image.name)[1].lower()
+            valid_extensions = ['.png', '.jpg', '.jpeg']
+            if image.size>settings.MAX_UPLOAD_SIZE:
+                raise forms.ValidationError(f"File size is too big, maximum allowed size is {round(settings.MAX_UPLOAD_SIZE / (1024 * 1024))} MB")
+            if extension not in valid_extensions:
+                raise forms.ValidationError("Unsupported file extension. Allowed extensions are: PNG, JPG, JPEG.")
+        return image
 
 class ResendVerificationEmailForm(forms.Form):
     email=forms.EmailField(label="Your email address")

@@ -11,13 +11,7 @@
         {{ form.email|as_crispy_field }}
         {{ form.password1|as_crispy_field }}
         {{ form.password2|as_crispy_field }}
-        <div class="mb-3">
-          <label for="profile_picture" class="form-label">Profile picture:</label>
-          <input type="file" class="form-control" name="profile_picture" id="profile_picture" required>
-          <div class="invalid-feedback">
-            Please choose a profile picture.
-          </div>
-        </div>
+        {{ form.image|as_crispy_field }}
         <button type="submit" class="btn btn-primary">Register</button>
       </form>
     </div>

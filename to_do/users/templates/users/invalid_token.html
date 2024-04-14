@@ -1,23 +1,28 @@
-{% extends "base.html" %}
+{% extends "users/base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Email Verification Failed</h1>
-            <p>The verification link is invalid or has expired.</p>
-            <p>This can happen if the link has already been used or if it has expired due to time constraints.</p>
-            
-            <!-- Providing a form or a link for the user to request a new verification email -->
-            <p>If you need a new verification link, please click the button below to resend the verification email.</p>
-            <form action="{% url 'resend_verification_email' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="user_email" value="{{ user.email }}">
-                <button type="submit" class="btn btn-primary">Resend Verification Email</button>
-            </form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h2 class="card-title">Email Verification Failed</h2>
+                </div>
+                <div class="card-body">
+                    <p>Unfortunately, the verification link is invalid or has expired. This can happen if the link has already been used or if it expired due to time constraints.</p>
+                    <p>If you need a new verification link, you can request one below. We'll send a new email to you, so you can verify your account.</p>
 
-            <!-- Alternatively, if you have a view where users can request a new verification email -->
-            <a href="{% url 'request_new_verification' %}" class="btn btn-primary">Request New Verification Email</a>
+                    <!-- Adding a form to resend the verification email -->
+                    <form action="{% url 'resend_verification_email' %}" method="post" class="mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_email" value="{{ user.email }}">
+                        <button type="submit" class="btn btn-primary">Resend Verification Email</button>
+                    </form>
+
+                    <!-- Alternatively, provide a link if you have a dedicated view for resending verification emails -->
+                    <a href="{% url 'resend_verification_email' %}" class="btn btn-link">Request New Verification Email</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

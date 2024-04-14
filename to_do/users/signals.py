@@ -6,6 +6,9 @@ from django.conf import settings
 from .models import Profile
 from django.core.files.storage import default_storage
 import os
+from PIL import Image, ImageEnhance
+import io
+from django.core.files.base import ContentFile
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
@@ -31,3 +34,4 @@ def delete_old_image(sender, instance, **kwargs):
     if instance.image and old_instance.image != instance.image:
         if old_instance.image and default_storage.exists(old_instance.image.name):
             old_instance.image.delete(save=False)
+

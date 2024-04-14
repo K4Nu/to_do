@@ -1,72 +1,88 @@
-from django.shortcuts import render,redirect
-from .forms import CustomUserCreationForm,UpdateUserForm,UpdateProfileForm,ResendVerificationEmailForm,CustomAuthenticationForm
+from django.shortcuts import render, redirect
+from .forms import (
+    CustomUserCreationForm,
+    UpdateUserForm,
+    UpdateProfileForm,
+    ResendVerificationEmailForm,
+    CustomAuthenticationForm
+)
 from .models import Profile
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from django.core.signing import Signer,BadSignature
+from django.core.signing import Signer, BadSignature
 from django.contrib.auth.models import User
-from .utils import send_verification_email
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login
-import os
+from task.models import Task
+from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.urls import reverse
+from django.contrib.sites.shortcuts import get_current_site
+from django.conf import settings
+from .utils import send_verification_email
 
 def index(request):
-    return render(request,"users/index.html")
+    if request.user.is_anonymous:
+        return render(request,"users/landing.html")
+    tasks = Task.objects.filter(status=True, date_end__gte=timezone.now(),user=request.user).order_by('date_end')
+    paginator=Paginator(tasks,9)
+    page=request.GET.get("page")
+    try:
+        tasks=paginator.page(page)
+    except PageNotAnInteger:
+        tasks=paginator.page(1)
+    except EmptyPage:
+        tasks.paginator.page(paginator.num_pages)
+    return render(request,"users/index.html",{"tasks":tasks})
 
 def register(request):
     if request.method=="POST":
-        form=CustomUserCreationForm(request.POST)
+        form=CustomUserCreationForm(request.POST,request.FILES)
         if form.is_valid():
             user=form.save()
-            profile=Profile(user=user)
-            profile_image=request.FILES.get("profile_picture")
-            max_size=1*1024*1024
-            if profile_image.size>max_size:
-                messages.error(request,"File is too big")
-                return
+            profile_image=form.cleaned_data.get("image")
             if not profile_image:
                 profile_image="default.jpg"
-            profile.image=profile_image
+            profile=Profile(user=user,image=profile_image)
             profile.save()
-            send_verification_email(user)
-            return render(request,'users/verification.html')
+            current_site=get_current_site(request)
+            domain=current_site.domain
+            send_verification_email(user,domain)
+            return render(request,"users/verification.html")
     else:
         form=CustomUserCreationForm()
-    return render(request,"users/register.html",{"form":form})
+    return render(request, "users/register.html", {"form": form})
+
 
 @login_required
 def profile(request):
     return render(request,"users/profile.html")
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .forms import UpdateUserForm, UpdateProfileForm
 
 @login_required
 def profile_update(request):
     user = request.user
     profile = user.profile
 
-    if request.method == "POST":
-        user_form = UpdateUserForm(request.POST, instance=user)
-        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=profile)
+    if request.method=="POST":
+        user_form=UpdateUserForm(request.POST,instance=user)
+        profile_form=UpdateProfileForm(request.POST,request.FILES,instance=profile)
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             saved_profile=profile_form.save(commit=False)
-            existing_image = request.user.profile.image
-            if saved_profile.image:
-                print(os.stat(saved_profile.image))
-            if not saved_profile.image:
-                saved_profile.image=existing_image
             saved_profile.save()
             return redirect('profile')
     else:
         user_form = UpdateUserForm(instance=user)
         profile_form = UpdateProfileForm(instance=profile)
 
-    return render(request, "users/update_profile.html", {"user_form": user_form, "profile_form": profile_form})
+    return render(request, "users/update_profile.html", {
+        "user_form": user_form,
+        "profile_form": profile_form
+    })
+
 
 
 def verify_email(request,token):
@@ -78,8 +94,8 @@ def verify_email(request,token):
         profile.email_verified=True
         profile.save()
         return redirect('login')
-    except (BadSignature, User.DoesNotExists,Profile.DoesNotExists):
-        return render(request,"invalid_token.html")
+    except (BadSignature, User.DoesNotExist,Profile.DoesNotExist):
+        return render(request,"users/invalid_token.html")
 
 def resend_verification_email(request):
     if request.method == "POST":
@@ -89,7 +105,9 @@ def resend_verification_email(request):
             try:
                 user = User.objects.get(email=email)
                 if not user.profile.email_verified:
-                    send_verification_email(user)
+                    current_site = get_current_site(request)
+                    domain = current_site.domain
+                    send_verification_email(user,domain)
                     messages.success(request, "A new verification email has been sent to your email address.")
                 else:
                     messages.info(request, "Your email is already verified.")
@@ -120,3 +138,6 @@ def custom_login_view(request):
     else:
         form = CustomAuthenticationForm()
     return render(request, 'users/login.html', {'form': form})
+
+
+
