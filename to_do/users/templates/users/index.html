@@ -1,8 +1,8 @@
 {% extends 'users/base.html' %}
-
+{% block title %}Task Maker{% endblock %}
 {% block content %}
 <div class="container mt-5">
-    <h2>Tasks</h2>
+    <h2>{{user.username}} Tasks</h2>
     <a href="{% url 'form' %}" class="btn btn-primary mb-3">Add New Task</a>
     <div class="row">
         {% for task in tasks %}
@@ -36,6 +36,7 @@
         {% endfor %}
     </div>
     <!-- Pagination Controls -->
+    {% if tasks.has_other_pages %}
     <div class="mt-4">
         <nav>
             <ul class="pagination justify-content-center">
@@ -73,5 +74,6 @@
             </ul>
         </nav>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
