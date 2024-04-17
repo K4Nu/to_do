@@ -1,6 +1,7 @@
 # Task Maker App
 
 ## Description
+![logo image](https://github.com/K4Nu/to_do_app/blob/main/to_do/static/images/logo.png)
 Task Maker is a dynamic task management application designed to help individuals and teams organize their projects and daily activities efficiently. This app offers features such as task creation, categorization, priority setting, and progress tracking, making it an indispensable tool for personal and professional use.
 
 ## Features
