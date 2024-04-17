@@ -62,7 +62,7 @@ env\Scripts\activate
 source env/bin/activate
 ```
 
-###Step 5: Configure Environment Variables
+### Step 5: Configure Environment Variables
 Before running the application, you'll need to set up the necessary environment variables. Create a `.env` file in the root directory of the project. This file will store sensitive information such as database credentials, secret keys, and third-party API keys, keeping them secure and separate from the main codebase.
 Here is an example of what the contents of the `.env` file might look like:
 ```plaintext
@@ -72,7 +72,7 @@ EMAIL_HOST_USER=email_here
 EMAIL_HOST_PASSWORD=password or app password here
 ```
 
-###Step 6: Run the Test Server
+### Step 6: Run the Test Server
 Now you can start the Django server by running:
 ```bash
 python manage.py runserver
