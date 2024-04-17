@@ -19,6 +19,8 @@ def create_profile(sender, instance, created, **kwargs):
             os.environ.get("EMAIL_HOST_USER"),
             [instance.email],
         )
+        if instance.is_superuser:
+            Profile.objects.create(user=instance,image="admin.png",email_verified=True)
 
 @receiver(pre_save, sender=Profile)
 def delete_old_image(sender, instance, **kwargs):
