@@ -74,11 +74,14 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("DATABASE_NAME"),
+        'USER': os.environ.get("DATABASE_USER"),
+        'PASSWORD': os.environ.get("DATABASE_PASSWORD"),
     }
 }
+
 
 
 # Password validation
@@ -140,4 +143,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
-MAX_UPLOAD_SIZE = 2000000
+MAX_UPLOAD_SIZE = 2*1024*1024

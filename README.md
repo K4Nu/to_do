@@ -13,14 +13,14 @@ Task Maker is a dynamic task management application designed to help individuals
 
 ## Technologies Used
 - **Django**
-- **SQLite**
+- **PostgreSQL**
 - **HTML, CSS, and Bootstrap**
 
 ## Progress
 - ✅ **Register with email verification and upload profile images** 
 - ✅ **Login users with verified login only** 
 - ✅ **Create tasks and manage them** 
-- 🔲 ****Change ORM database to PostgreSQL****
+- ✅ **Change ORM database to PostgreSQL**
 - 🔲 **AI-generated profile images based on user prompts** 
 - 🔲 **AI prompt assistant to help organize tasks** 
 - 🔲 **Email notifications about task deadlines** 
@@ -67,13 +67,18 @@ Before running the application, you'll need to set up the necessary environment 
 Here is an example of what the contents of the `.env` file might look like:
 ```plaintext
 SECRET_KEY=your_secret_key_here
-DEBUG=True
-EMAIL_HOST_USER=email_here
-EMAIL_HOST_PASSWORD=password or app password here
+DEBUG=False  # Set to True only during development
+EMAIL_HOST_USER=your_email_here
+EMAIL_HOST_PASSWORD=your_password_here
+DATABASE_NAME=your_postgresql_database_name
+DATABASE_USER=your_database_username
+DATABASE_PASSWORD=your_database_password
 ```
 
 ### Step 6: Run the Test Server
 Now you can start the Django server by running:
 ```bash
+python manage.py makemigrations
+python manage.py migrate
 python manage.py runserver
 ```

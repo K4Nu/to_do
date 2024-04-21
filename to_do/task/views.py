@@ -14,6 +14,7 @@ def form(request):
         form = TaskForm(request.POST)
         user=request.user
         if form.is_valid():
+            form.user=user
             task=form.save(commit=False)
             task.user=request.user
             task.save()
