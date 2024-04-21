@@ -1,7 +1,7 @@
 # Task Maker App
 
 ## Description
-![logo image](https://github.com/K4Nu/to_do_app/blob/main/to_do/static/images/logo.png)
+![logo image](https://github.com/K4Nu/TaskMaker/blob/main/to_do/static/images/logo.png)
 Task Maker is a dynamic task management application designed to help individuals organize their projects and daily activities with deadlines efficiently.
 
 ## Features
@@ -31,7 +31,7 @@ Task Maker is a dynamic task management application designed to help individuals
 ### Step 1: Clone the Repository
 To get started with the Task Maker app, you'll first need to clone the repository to your local machine. You can do this by running the following command in your terminal:
 ```bash
-git clone https://github.com/K4Nu/to_do_app.git
+git clone https://github.com/K4Nu/TaskMaker.git
 ```
 
 ### Step 2: Set Up the Development Environment
