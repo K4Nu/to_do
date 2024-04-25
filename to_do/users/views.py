@@ -1,10 +1,15 @@
+import os.path
+from PIL import Image
+import io
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .forms import (
     CustomUserCreationForm,
     UpdateUserForm,
     UpdateProfileForm,
     ResendVerificationEmailForm,
-    CustomAuthenticationForm
+    CustomAuthenticationForm,
+    ImageGenerationForm
 )
 from .models import Profile
 from django.contrib.auth.decorators import login_required
@@ -20,7 +25,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
-from .utils import send_verification_email
+from .utils import send_verification_email,image_generation
+from django.utils.timezone import now
 
 def index(request):
     if request.user.is_anonymous:
@@ -58,6 +64,8 @@ def register(request):
 @login_required
 def profile(request):
     return render(request,"users/profile.html")
+    #current
+    #expired
 
 
 @login_required
@@ -139,5 +147,29 @@ def custom_login_view(request):
         form = CustomAuthenticationForm()
     return render(request, 'users/login.html', {'form': form})
 
+
+@login_required
+def generate_image(request):
+    if request.method == "POST":
+        form = ImageGenerationForm(request.POST)
+        if form.is_valid():
+            try:
+                filename = "test.png"
+                filepath = os.path.join("media", filename)
+                input_data = form.cleaned_data.get("input")
+                image_data = image_generation({"inputs": input_data})
+
+                image=Image.open(io.BytesIO(image_data))
+                image.thumbnail((512,512),Image.Resampling.LANCZOS)
+                image.save(filepath,"PNG")
+
+                timestamp = now().strftime("%Y%m%d%H%M%S")
+                image_url = os.path.join('/media/', filename) + f"?{timestamp}"
+                return JsonResponse({'success': True, 'image_url': image_url}, status=200)
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    else:
+        form = ImageGenerationForm()
+    return render(request, "users/generate_image.html", {"form": form})
 
 

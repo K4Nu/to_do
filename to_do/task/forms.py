@@ -17,14 +17,14 @@ class TaskForm(forms.ModelForm):
     def clean_date_start(self):
         date_start = self.cleaned_data.get("date_start")
         if date_start and date_start < timezone.now().date():
-            raise ValidationError("The start date cannot be in the past.")
+            raise forms.ValidationError("The start date cannot be in the past.")
         return date_start
 
     def clean_date_end(self):
         date_start = self.cleaned_data.get("date_start")
         date_end = self.cleaned_data.get("date_end")
         if date_end and date_end < timezone.now().date():
-            raise ValidationError("The end date cannot be in the past.")
+            raise forms.ValidationError("The end date cannot be in the past.")
         if date_start and date_end and date_end < date_start:
             raise ValidationError("The end date cannot be earlier than the start date.")
         return date_end

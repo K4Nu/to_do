@@ -78,3 +78,5 @@ class ResendVerificationEmailForm(forms.Form):
 class CustomAuthenticationForm(AuthenticationForm):
     pass
 
+class ImageGenerationForm(forms.Form):
+    input=forms.CharField(label="input",max_length=1500)

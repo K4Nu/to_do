@@ -1,0 +1,46 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Generate Image</h1>
+    <form id="imageForm" method="post" enctype="multipart/form-data" class="mb-3">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="text" name="{{ form.input.name }}" id="input" class="form-control" value="{{ form.input.value|default_if_none:'' }}" placeholder="Enter description for the image">
+        </div>
+        <button type="submit" class="btn btn-primary">Generate Image</button>
+    </form>
+
+    <div id="imageContainer" class="mt-4 d-flex justify-content-center align-items-center" style="min-height: 200px;">
+        <!-- The image will be added here dynamically -->
+    </div>
+</div>
+
+<script>
+document.getElementById('imageForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+
+    fetch("{% url 'generate_image' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            var imageContainer = document.getElementById('imageContainer');
+            imageContainer.innerHTML = '<img src="' + data.image_url + '" alt="Generated Image" class="img-fluid mx-auto" style="display: block; max-width: 100%;">'; // Ensure centering by using mx-auto and display: block
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Network Error: ' + error);
+    });
+});
+</script>
+
+{% endblock %}
