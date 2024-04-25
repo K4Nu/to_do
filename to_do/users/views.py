@@ -63,10 +63,9 @@ def register(request):
 
 @login_required
 def profile(request):
-    return render(request,"users/profile.html")
-    #current
-    #expired
-
+    current=Task.objects.filter(user=request.user,status=True)
+    done = Task.objects.filter(user=request.user, status=False)
+    return render(request, "users/profile.html",{"current":current,"done":done})
 
 @login_required
 def profile_update(request):
@@ -157,19 +156,20 @@ def generate_image(request):
                 filename = "test.png"
                 filepath = os.path.join("media", filename)
                 input_data = form.cleaned_data.get("input")
-                image_data = image_generation({"inputs": input_data})
 
-                image=Image.open(io.BytesIO(image_data))
-                image.thumbnail((512,512),Image.Resampling.LANCZOS)
-                image.save(filepath,"PNG")
+                image_data = image_generation({"inputs": input_data})
+                image = Image.open(io.BytesIO(image_data))
+                image.thumbnail((512, 512), Image.Resampling.LANCZOS)
+                image.save(filepath, "PNG")
 
                 timestamp = now().strftime("%Y%m%d%H%M%S")
                 image_url = os.path.join('/media/', filename) + f"?{timestamp}"
                 return JsonResponse({'success': True, 'image_url': image_url}, status=200)
             except Exception as e:
-                return JsonResponse({'success': False, 'error': str(e)}, status=500)
+                return JsonResponse({'success': False, 'error': f"An error occurred: {str(e)}"}, status=500)
+        else:
+            errors={field:error.get_json_data() for field,error in form.errors.items()}
+            return JsonResponse({"success":False,"errors":errors},status=400)
     else:
         form = ImageGenerationForm()
     return render(request, "users/generate_image.html", {"form": form})
-
-

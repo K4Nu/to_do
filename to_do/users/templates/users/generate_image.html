@@ -6,10 +6,17 @@
     <form id="imageForm" method="post" enctype="multipart/form-data" class="mb-3">
         {% csrf_token %}
         <div class="form-group">
-            <input type="text" name="{{ form.input.name }}" id="input" class="form-control" value="{{ form.input.value|default_if_none:'' }}" placeholder="Enter description for the image">
+            <input type="text" name="input" id="input" class="form-control" placeholder="Enter description for the image">
         </div>
         <button type="submit" class="btn btn-primary">Generate Image</button>
     </form>
+
+    <div id="loadingContainer" style="display: none;">
+        <span>Loading...</span>
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only"></span>
+        </div>
+    </div>
 
     <div id="imageContainer" class="mt-4 d-flex justify-content-center align-items-center" style="min-height: 200px;">
         <!-- The image will be added here dynamically -->
@@ -21,6 +28,10 @@ document.getElementById('imageForm').addEventListener('submit', function(e) {
     e.preventDefault();
     var formData = new FormData(this);
 
+    // Show the loading spinner when the form is submitted
+    var loadingContainer = document.getElementById('loadingContainer');
+    loadingContainer.style.display = 'block';
+
     fetch("{% url 'generate_image' %}", {
         method: 'POST',
         body: formData,
@@ -28,17 +39,26 @@ document.getElementById('imageForm').addEventListener('submit', function(e) {
             'X-CSRFToken': '{{ csrf_token }}',
         },
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
-        if(data.success) {
+        if (data.success) {
             var imageContainer = document.getElementById('imageContainer');
-            imageContainer.innerHTML = '<img src="' + data.image_url + '" alt="Generated Image" class="img-fluid mx-auto" style="display: block; max-width: 100%;">'; // Ensure centering by using mx-auto and display: block
+            imageContainer.innerHTML = '<img src="' + data.image_url + '" alt="Generated Image" class="img-fluid mx-auto" style="display: block; max-width: 100%;">';
         } else {
             alert('Error: ' + data.error);
         }
+        // Hide the loading spinner when the request is completed
+        loadingContainer.style.display = 'none';
     })
     .catch(error => {
-        alert('Network Error: ' + error);
+        // Hide the loading spinner if there's a network error
+        loadingContainer.style.display = 'none';
+        alert('Network Error: ' + error.message);
     });
 });
 </script>

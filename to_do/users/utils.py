@@ -22,3 +22,9 @@ def image_generation(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
     return response.content
 
+def nfsw_filter(payload):
+    API_URL=os.environ.get("NFSW_API_URL")
+    headers={"Authorization":os.environ.get("NFSW_KEY")}
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.json()
+

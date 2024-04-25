@@ -45,5 +45,6 @@ def edit_task(request,task_id):
 def mark_as_done(request,task_id):
     task=Task.objects.get(id=task_id)
     task.status=False
+    task.date_end=timezone.now().date()
     task.save()
     return redirect('index')

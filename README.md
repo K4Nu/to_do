@@ -21,7 +21,7 @@ Task Maker is a dynamic task management application designed to help individuals
 - ✅ **Login users with verified login only** 
 - ✅ **Create tasks and manage them** 
 - ✅ **Change ORM database to PostgreSQL**
-- 🔲 **AI-generated profile images based on user prompts** 
+- ✅ **AI-generated images based on user prompts** 
 - 🔲 **AI prompt assistant to help organize tasks** 
 - 🔲 **Email notifications about task deadlines** 
 - 🔲 **Website deployment** 
