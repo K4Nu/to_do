@@ -85,13 +85,8 @@ class ImageGenerationForm(forms.Form):
     def clean_input(self):
         input = self.cleaned_data.get("input")
         output = nfsw_filter({'inputs': input})
-
-        if not output or not isinstance(output[0], list) or 'label' not in output[0][0]:
-            raise forms.ValidationError("Failed to verify image content safety")
-
         # Extract scores for the label 'safe'
         safe_scores = [item['score'] for item in output[0] if item['label'] == 'safe']
-
         if not safe_scores or safe_scores[0] < 0.7:
             raise forms.ValidationError("This content is not allowed")
         return input

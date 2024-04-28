@@ -169,6 +169,7 @@ def generate_image(request):
                 return JsonResponse({'success': False, 'error': f"An error occurred: {str(e)}"}, status=500)
         else:
             errors={field:error.get_json_data() for field,error in form.errors.items()}
+            print(errors)
             return JsonResponse({"success":False,"errors":errors},status=400)
     else:
         form = ImageGenerationForm()
