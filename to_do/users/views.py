@@ -13,18 +13,15 @@ from .forms import (
 )
 from .models import Profile
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
 from django.core.signing import Signer, BadSignature
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login
 from task.models import Task
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
-from django.conf import settings
 from .utils import send_verification_email,image_generation
 from django.utils.timezone import now
 

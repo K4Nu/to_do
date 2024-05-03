@@ -16,7 +16,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG")
 
-ALLOWED_HOSTS = ["127.0.0.1", 'localhost']
+ALLOWED_HOSTS = [".vercel.app","127.0.0.1"]
 
 
 # Application definition
@@ -24,8 +24,8 @@ ALLOWED_HOSTS = ["127.0.0.1", 'localhost']
 INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "task.apps.TaskConfig",
-    "crispy_forms",
-    "crispy_bootstrap5",
+    'crispy_forms',
+    'crispy_bootstrap5',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -83,11 +83,6 @@ DATABASES = {
         "PORT":os.environ.get("DATABASE_PORT"),
     }
 }
-
-
-
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
